@@ -20,14 +20,14 @@ const roll = keyframes`
 const SausageType = styled.span`
   position: absolute;
   background-image: radial-gradient(ellipse, rgba(30, 10, 0, 0.4) 0%, transparent 100%);
-        background-color: #bc0b00;
+  background-color: #bc0b00;
   background-position: 0px;
   background-size: 20px 10px;
   width: 20px;
   min-width: 20px;
   height: 80px;
-  top: 23px;
-  left: -5%;
+  top: ${props=>props.positionY + 23}px;
+  left: ${props=>props.positionX}px;
   border-radius: 20px 10px 10px 20px;
   cursor: pointer;
   box-shadow: inset -2px 2px 2px 1px rgba(255, 180, 90, 0.5),
@@ -196,19 +196,20 @@ class SausageRoll extends React.PureComponent {
   }
 
   render() {
-    return (
+    const {positionX = 0, positionY = 0} = this.props;
 
-      <SausageType>
+    return (
+      <SausageType positionX={positionX} positionY={positionY}>
          <Smoke>
-        <div class="particleBox">
-          <div class="particle particle1"></div>
-          <div class="particle particle2"></div>
-          <div class="particle particle3"></div>
-          <div class="particle particle4"></div>
-          <div class="particle particle5"></div>
-          <div class="particle particle6"></div>
-          <div class="particle particle7"></div>
-        </div>
+          <div className="particleBox">
+            <div className="particle particle1"></div>
+            <div className="particle particle2"></div>
+            <div className="particle particle3"></div>
+            <div className="particle particle4"></div>
+            <div className="particle particle5"></div>
+            <div className="particle particle6"></div>
+            <div className="particle particle7"></div>
+          </div>
         </Smoke>
       </SausageType>
     )

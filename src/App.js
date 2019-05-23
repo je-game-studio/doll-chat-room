@@ -2,8 +2,12 @@ import React from 'react';
 import './App.css';
 import Person from './component/person';
 import ChatBar from './component/ChatBar';
+import SausageRoll from './component/sausage';
 
-const walkInterval = 40;
+const walkInterval = 30;
+
+let SAUSAGE_SEA = [];
+
 class App extends React.Component {
 
   constructor(props) {
@@ -17,13 +21,13 @@ class App extends React.Component {
       faceRight: true
     }
     this.interval = null;
+    this.generateSausages();
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.logKey);
     document.addEventListener('keyup', this.stop);
-    this.interval = setInterval(this.intervalAction, 200);
-
+    this.interval = setInterval(this.intervalAction, 150);
   }
 
 
@@ -34,8 +38,19 @@ class App extends React.Component {
 
   }
   
+  checkLocation(X,Y){
+    return (
+      (Y > window.innerHeight) ||
+      (Y < 0) ||
+      (X > window.innerWidth) ||
+      (X < 0)
+    )
+  }
+
   intervalAction = () => {
     const {actionCode, isJump} = this.state;
+
+    
 
     switch (actionCode) {
       case 'Space':
@@ -48,21 +63,38 @@ class App extends React.Component {
         }
         break;
       case 'ArrowUp':
+        if(this.checkLocation(this.state.directionX, this.state.directionY - walkInterval)) return;
         this.setState(state=>({...state, isMoving: true, directionY: this.state.directionY - walkInterval}));
         break;
       case 'ArrowDown':
+          if(this.checkLocation(this.state.directionX, this.state.directionY + walkInterval)) return;
         this.setState(state=>({...state, isMoving: true, directionY: this.state.directionY + walkInterval}));
         break;
       case 'ArrowLeft':
+          if(this.checkLocation(this.state.directionX - walkInterval , this.state.directionY )) return;
         this.setState(state=>({...state, isMoving: true, faceRight: false, directionX: this.state.directionX - walkInterval}));
         break;
       case 'ArrowRight':
+        if(this.checkLocation(this.state.directionX + walkInterval , this.state.directionY)) return;
         this.setState(state=>({...state, isMoving: true, faceRight: true, directionX: this.state.directionX + walkInterval}));
         break;
       default:
         break;
     }
 
+    const getIndex = SAUSAGE_SEA.findIndex(sausage => {
+
+      return (
+      (this.state.directionX >= (sausage.X)) &&
+      (this.state.directionX <= (sausage.X + 50)) &&
+      (this.state.directionY >= (sausage.Y)) &&
+      (this.state.directionY <= (sausage.Y + 150)))
+    });
+
+    console.log("TCL: App -> intervalAction -> getIndex", getIndex)
+    if(getIndex >= 0) {
+      SAUSAGE_SEA.splice(getIndex, 1)
+    }
   }
 
   stop = event => {
@@ -71,7 +103,6 @@ class App extends React.Component {
 
   logKey = event => {
     const { code } = event;
-    console.log("TCL: App -> key", code);
     switch(code) {
 
       case 'Enter':
@@ -80,7 +111,29 @@ class App extends React.Component {
       default:
         return this.setState(state=>({...state, actionCode: code}));
     }
-    
+  }
+
+  generateSausages = () => {
+
+    for(let i = 0; i< 10; i++){
+      const X = (Math.random() * window.innerWidth).toFixed(0);
+      const Y = (Math.random() * window.innerHeight).toFixed(0);
+      SAUSAGE_SEA.push(
+        {
+          id: i,
+          X: parseInt(X),Y : parseInt(Y)
+        }
+      )
+    }
+  }
+
+  renderSausages = () => {
+    let items = [];
+
+    SAUSAGE_SEA.forEach(item => (
+      items.push(<SausageRoll key={`sausage_${item.id}`} positionX={item.X} positionY={item.Y}/>)
+    ));
+    return items;
   }
 
   render() {
@@ -88,6 +141,7 @@ class App extends React.Component {
 
     return (
       <div className="play-ground">
+        {this.renderSausages()}
         <Person isMoving={isMoving} faceRight={faceRight} isJump={isJump} directionX={directionX} directionY={directionY}/>
         <ChatBar open={openChatBar}/>
       </div>
