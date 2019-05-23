@@ -453,7 +453,7 @@ class Person extends React.PureComponent {
             <HairTailEnd />
             <HairEnd />
             <HairBack />
-            <HairFrond left={51} rotate={-73} />
+            <HairFrond left={50} rotate={-73} />
             <HairFrond left={31} rotate={-53} />
             <HairFrond left={11} rotate={-23} />
             <HairUp />
